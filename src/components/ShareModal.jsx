@@ -3,7 +3,8 @@ import { motion } from 'framer-motion';
 
 const ShareModal = ({ isOpen, onClose, darkMode }) => {
   const [copied, setCopied] = useState(false);
-  const shareLink = "https://taskmaster-app.example.com/share/12345";
+  const shareLink = "https://task-master-git-main-pavan-hosattis-projects.vercel.app/";
+  const shareText = "Check out TaskMaster - the beautifully designed productivity app that's helping me stay organized! Try it now:";
   
   if (!isOpen) return null;
   
@@ -11,6 +12,31 @@ const ShareModal = ({ isOpen, onClose, darkMode }) => {
     navigator.clipboard.writeText(shareLink);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+  
+  const handleShare = (platform) => {
+    let shareUrl = '';
+    
+    switch(platform) {
+      case 'Facebook':
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}&quote=${encodeURIComponent(shareText)}`;
+        break;
+      case 'Twitter':
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareLink)}`;
+        break;
+      case 'WhatsApp':
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareLink)}`;
+        break;
+      case 'Email':
+        shareUrl = `mailto:?subject=${encodeURIComponent('Check out TaskMaster!')}&body=${encodeURIComponent(shareText + ' ' + shareLink)}`;
+        break;
+      default:
+        break;
+    }
+    
+    if (shareUrl) {
+      window.open(shareUrl, '_blank');
+    }
   };
   
   return (
@@ -67,14 +93,14 @@ const ShareModal = ({ isOpen, onClose, darkMode }) => {
             {[
               { name: 'Facebook', icon: '📘', color: 'bg-blue-600' },
               { name: 'Twitter', icon: '🐦', color: 'bg-blue-400' },
-              { name: 'WhatsApp', icon: '📱', color: 'bg-green-500' },
-              { name: 'Email', icon: '📧', color: 'bg-red-500' }
+              { name: 'WhatsApp', icon: '📱', color: 'bg-green-500' }
             ].map((platform) => (
               <motion.button
                 key={platform.name}
                 whileHover={{ scale: 1.1, y: -5 }}
                 whileTap={{ scale: 0.9 }}
                 className={`${platform.color} text-white p-3 rounded-xl flex flex-col items-center justify-center`}
+                onClick={() => handleShare(platform.name)}
               >
                 <span className="text-2xl mb-1">{platform.icon}</span>
                 <span className="text-xs">{platform.name}</span>
@@ -117,3 +143,5 @@ const ShareModal = ({ isOpen, onClose, darkMode }) => {
 };
 
 export default ShareModal;
+
+
