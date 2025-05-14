@@ -14,28 +14,18 @@ const ShareModal = ({ isOpen, onClose, darkMode }) => {
     setTimeout(() => setCopied(false), 2000);
   };
   
-  const handleShare = (platform) => {
-    let shareUrl = '';
-    
-    switch(platform) {
-      case 'Facebook':
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}&quote=${encodeURIComponent(shareText)}`;
-        break;
-      case 'Twitter':
-        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareLink)}`;
-        break;
-      case 'WhatsApp':
-        shareUrl = `https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareLink)}`;
-        break;
-      case 'Email':
-        shareUrl = `mailto:?subject=${encodeURIComponent('Check out TaskMaster!')}&body=${encodeURIComponent(shareText + ' ' + shareLink)}`;
-        break;
-      default:
-        break;
-    }
-    
-    if (shareUrl) {
-      window.open(shareUrl, '_blank');
+  const handleShare = () => {
+    if (navigator.share) {
+      navigator.share({
+        title: 'TaskMaster',
+        text: shareText,
+        url: shareLink,
+      })
+      .catch((error) => console.log('Error sharing', error));
+    } else {
+      // Fallback for browsers that don't support the Web Share API
+      handleCopyLink();
+      alert("Link copied to clipboard! Your browser doesn't support direct sharing.");
     }
   };
   
@@ -86,49 +76,23 @@ const ShareModal = ({ isOpen, onClose, darkMode }) => {
           </div>
         </div>
         
-        {/* Share options */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">Share via</h3>
-          <div className="grid grid-cols-4 gap-4">
-            {[
-              { name: 'Facebook', icon: '📘', color: 'bg-blue-600' },
-              { name: 'Twitter', icon: '🐦', color: 'bg-blue-400' },
-              { name: 'WhatsApp', icon: '📱', color: 'bg-green-500' }
-            ].map((platform) => (
-              <motion.button
-                key={platform.name}
-                whileHover={{ scale: 1.1, y: -5 }}
-                whileTap={{ scale: 0.9 }}
-                className={`${platform.color} text-white p-3 rounded-xl flex flex-col items-center justify-center`}
-                onClick={() => handleShare(platform.name)}
-              >
-                <span className="text-2xl mb-1">{platform.icon}</span>
-                <span className="text-xs">{platform.name}</span>
-              </motion.button>
-            ))}
-          </div>
-        </div>
-        
-        {/* QR Code */}
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-3">QR Code</h3>
-          <div className="flex justify-center">
-            <div className="w-40 h-40 bg-white p-2 rounded-lg border border-gray-200 dark:border-gray-600 flex items-center justify-center">
-              <div className="w-full h-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
-                <span className="text-gray-500 dark:text-gray-400 text-xs text-center">
-                  QR Code Placeholder
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
+        {/* Simple Share Button */}
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={handleShare}
+          className="w-full py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-lg font-medium flex items-center justify-center"
+        >
+          <span className="mr-2">🔗</span>
+          Share TaskMaster
+        </motion.button>
         
         {/* Share message */}
         <motion.div 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800"
+          className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-800 mt-6"
         >
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-2 flex items-center">
             <span className="mr-2">💬</span> Suggested Message
@@ -143,5 +107,6 @@ const ShareModal = ({ isOpen, onClose, darkMode }) => {
 };
 
 export default ShareModal;
+
 
 
