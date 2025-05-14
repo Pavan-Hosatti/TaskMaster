@@ -123,22 +123,30 @@ const AboutDetails = ({ isOpen, onClose, darkMode }) => {
           <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
             Enjoying TaskMaster? Share it with your friends and colleagues!
           </p>
-          <div className="flex space-x-2">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex-1 py-2 px-4 bg-blue-500 text-white rounded-lg font-medium flex items-center justify-center"
-            >
-              <span className="mr-2">📱</span> Share Link
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="flex-1 py-2 px-4 bg-purple-500 text-white rounded-lg font-medium flex items-center justify-center"
-            >
-              <span className="mr-2">📧</span> Email
-            </motion.button>
-          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="w-full py-2 px-4 bg-blue-500 text-white rounded-lg font-medium flex items-center justify-center"
+            onClick={() => {
+              const shareLink = "https://task-master-git-main-pavan-hosattis-projects.vercel.app/";
+              const shareText = "Check out TaskMaster - the beautifully designed productivity app that's helping me stay organized! Try it now:";
+              
+              if (navigator.share) {
+                navigator.share({
+                  title: 'TaskMaster',
+                  text: shareText,
+                  url: shareLink,
+                })
+                .catch((error) => console.log('Error sharing', error));
+              } else {
+                // Fallback for browsers that don't support the Web Share API
+                navigator.clipboard.writeText(shareLink);
+                alert("Link copied to clipboard! Your browser doesn't support direct sharing.");
+              }
+            }}
+          >
+            <span className="mr-2">🔗</span> Share TaskMaster
+          </motion.button>
         </div>
       </motion.div>
     </div>
@@ -146,4 +154,5 @@ const AboutDetails = ({ isOpen, onClose, darkMode }) => {
 };
 
 export default AboutDetails;
+
 
