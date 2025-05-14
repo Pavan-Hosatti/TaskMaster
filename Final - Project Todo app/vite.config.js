@@ -11,11 +11,7 @@ export default defineConfig({
   },
   // Add base path if deploying to a subdirectory
   // base: './',
-  build: {
-    outDir: 'dist',
-    minify: 'terser',
-    sourcemap: false
-  }
+
 })
 
 
